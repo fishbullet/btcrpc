@@ -10,10 +10,12 @@ Package doesn't contains [all RPC methods](https://bitcoin.org/en/developer-refe
 
 The implemented methods:
 
-- [x] getinfo
-- [x] getbalance
-- [x] getnewaddress
-- [ ] ...
+- [x] [getinfo](https://bitcoin.org/en/developer-reference#getinfo)
+- [x] [getbalance](https://bitcoin.org/en/developer-reference#getbalance)
+- [x] [getnewaddress](https://bitcoin.org/en/developer-reference#getnewaddress)
+- [ ] [estimatefee](https://bitcoin.org/en/developer-reference#estimatefee)
+- [ ] [sendtoaddress](https://bitcoin.org/en/developer-reference#sendtoaddress)
+- [ ] [getreceivedbyaddress](https://bitcoin.org/en/developer-reference#getreceivedbyaddress)
 
 Feel free to submit a pull request with new RPC method.
 
