@@ -6,8 +6,78 @@
 
 The `btcrpc` library provide simple client for interaction with [bitcoin](https://github.com/bitcoin/bitcoin).
 
-## Status
+## Usage
 
-Under development.
+Make sure you're running bitcoin node. Setup and run JSON-RPC client:
 
+```go
+package main
 
+import (  
+    "encoding/json"
+    "github.com/fishbullet/btcrpc"
+    "fmt"
+)
+
+func main() {  
+  btcClient := btcrpc.NewClient(&btcrpc.Options{
+    Login:    "RPC_LOGIN_HERE",
+    Password: "RPC_PASSWORD_HERE",
+    Host:     "127.0.0.1", // Localhost
+    Port:     8334,        // Testnet port      
+  })
+
+  // Get balance across all accounts
+  balance, err := btcClient.GetBalance("", 0)
+  result := []byte(balance.Response.Result)
+  var balance float64
+  json.Unmarshal(result, &balance)
+  fmt.Printf("%s", balance) // => 0.034
+}
+```
+
+## Development
+
+Run docker container with testnet:
+
+```bash
+docker build -t btc_node
+docker run --rm -v -p 8334:8334 $(pwd)/bitcoin:/root/.bitcoin btc_node
+```
+
+Test bitcoin node RPC api:
+
+```bash
+curl --data-binary '{"jsonrpc":"1.0","id":"curltext","method":"getinfo","params":[]}' -H 'content-type:text/plain;' http://admin:admin@127.0.0.1:8334/ | jq .
+```
+Should return:
+
+```json
+{
+  "result": {
+    "deprecation-warning": "WARNING: getinfo is deprecated and will be fully removed in 0.16...",
+    "version": 150100,
+    "protocolversion": 70015,
+    "walletversion": 139900,
+    "balance": 0,
+    "blocks": 90381,
+    "timeoffset": 45,
+    "connections": 8,
+    "proxy": "",
+    "difficulty": 16,
+    "testnet": true,
+    "keypoololdest": 1516618949,
+    "keypoolsize": 2000,
+    "paytxfee": 0,
+    "relayfee": 1e-05,
+    "errors": ""
+  },
+  "error": null,
+  "id": "curltext"
+}
+```
+
+### Buy me a beer
+
+BTC: 19SYMA2hqRZHRSL4di35Uf7jV87KBKc9bf
+ETH: 0x9c00577856BcBDf87Fea58404FaEC5A2034BD86F
