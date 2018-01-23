@@ -48,7 +48,7 @@ docker run --rm -v -p 8334:8334 $(pwd)/bitcoin:/root/.bitcoin btc_node
 Test bitcoin node RPC api:
 
 ```bash
-curl --data-binary '{"jsonrpc":"1.0","id":"curltext","method":"getinfo","params":[]}' -H 'content-type:text/plain;' http://admin:admin@127.0.0.1:8334/ | jq .
+curl --data-binary '{"jsonrpc":"1.0","id":1,"method":"getinfo","params":[]}' -H 'content-type:text/plain;' http://admin:admin@127.0.0.1:8334/
 ```
 Should return:
 
@@ -73,11 +73,12 @@ Should return:
     "errors": ""
   },
   "error": null,
-  "id": "curltext"
+  "id": 1
 }
 ```
 
 ### Buy me a beer
 
 BTC: 19SYMA2hqRZHRSL4di35Uf7jV87KBKc9bf
+
 ETH: 0x9c00577856BcBDf87Fea58404FaEC5A2034BD86F
