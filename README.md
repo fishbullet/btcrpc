@@ -24,7 +24,8 @@ func main() {
     Login:    "RPC_LOGIN_HERE",
     Password: "RPC_PASSWORD_HERE",
     Host:     "127.0.0.1", // Localhost
-    Port:     8334,        // Testnet port      
+    Port:     8334,        // Testnet port
+    TSL:      true,        // If you're using https instead of http
   })
 
   // Get balance across all accounts
