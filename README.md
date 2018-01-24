@@ -26,70 +26,39 @@ Make sure you're running bitcoin node. Setup and run JSON-RPC client:
 ```go
 package main
 
-import (  
-    "encoding/json"
-    "github.com/fishbullet/btcrpc"
-    "fmt"
+import (
+	"encoding/json"
+	"github.com/fishbullet/btcrpc"
+	"log"
 )
 
-func main() {  
-  btcClient := btcrpc.NewClient(&btcrpc.Options{
-    Login:    "RPC_LOGIN_HERE",
-    Password: "RPC_PASSWORD_HERE",
-    Host:     "127.0.0.1", // Localhost
-    Port:     8334,        // Testnet port
-    TSL:      true,        // If you're using https instead of http
-  })
+func main() {
+	btcClient := btcrpc.NewClient(&btcrpc.Options{
+		Login:    "admin",
+		Password: "admin",
+		Host:     "127.0.0.1", // Localhost
+		Port:     8334,        // Testnet port
+		TSL:      false,       // If you're using https instead of http
+	})
 
-  // Get balance across all accounts
-  balance, err := btcClient.GetBalance("", 0)
-  result := []byte(balance.Response.Result)
-  var balance float64
-  json.Unmarshal(result, &balance)
-  fmt.Printf("%s", balance) // => 0.034
+	// Get balance across all accounts
+	minConf := 0
+	account := ""
+	balance, err := btcClient.GetBalance(account, minConf)
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
+	result := []byte(balance.Result())
+	var b float64
+	json.Unmarshal(result, &b)
+	log.Printf("%f", b)
 }
 ```
-
-## Development
-
-Run docker container with testnet:
-
-```bash
-docker build -t btc_node
-docker run --rm -v -p 8334:8334 $(pwd)/bitcoin:/root/.bitcoin btc_node
+Will output:
+```
+2018/01/24 16:15:25 0.000000
 ```
 
-Test bitcoin node RPC api:
-
-```bash
-curl --data-binary '{"jsonrpc":"1.0","id":1,"method":"getinfo","params":[]}' -H 'content-type:text/plain;' http://admin:admin@127.0.0.1:8334/
-```
-Should return:
-
-```json
-{
-  "result": {
-    "deprecation-warning": "WARNING: getinfo is deprecated and will be fully removed in 0.16...",
-    "version": 150100,
-    "protocolversion": 70015,
-    "walletversion": 139900,
-    "balance": 0,
-    "blocks": 90381,
-    "timeoffset": 45,
-    "connections": 8,
-    "proxy": "",
-    "difficulty": 16,
-    "testnet": true,
-    "keypoololdest": 1516618949,
-    "keypoolsize": 2000,
-    "paytxfee": 0,
-    "relayfee": 1e-05,
-    "errors": ""
-  },
-  "error": null,
-  "id": 1
-}
-```
 
 ### Disclaimer
 > :exclamation: Package provided “as is," and you use it at your own risk.. 

@@ -1,7 +1,7 @@
 package btcrpc
 
 //
-// This is simple JSON RPCclient for bitcoin node
+// This is simple JSON RPC client for bitcoin node
 //
 
 import (
@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
+	// "log"
 	"net/http"
 	"strings"
 	"sync"
@@ -32,7 +32,7 @@ type Options struct {
 	Login       string
 	Password    string
 	Host        string
-	Port        int
+	Port        string
 	ContentType string
 	TSL         bool
 }
@@ -64,7 +64,7 @@ func NewClient(opt *Options) Client {
 		scheme = "https"
 	}
 	scheme = "http"
-	c.Path = fmt.Sprintf("%s://%s:%d", scheme, c.Options.Host, c.Options.Port)
+	c.Path = fmt.Sprintf("%s://%s:%s", scheme, c.Options.Host, c.Options.Port)
 	return c
 }
 
@@ -75,7 +75,7 @@ func (c *Client) GetInfo() (*RpcResponse, error) {
 	buf := c.buildReqParams("getinfo", []interface{}{})
 	resp, err := c.submitRequest(buf)
 	if err != nil {
-		log.Printf("%s", err)
+		// log.Printf("%s", err)
 		return &RpcResponse{}, err
 	}
 	return resp, nil
@@ -90,7 +90,7 @@ func (c *Client) GetNewAddress(account string) (*RpcResponse, error) {
 	buf := c.buildReqParams("getnewaddress", params)
 	resp, err := c.submitRequest(buf)
 	if err != nil {
-		log.Printf("%s", err)
+		// log.Printf("%s", err)
 		return &RpcResponse{}, err
 	}
 	return resp, nil
@@ -106,7 +106,7 @@ func (c *Client) GetBalance(account string, minConf int) (*RpcResponse, error) {
 	buf := c.buildReqParams("getbalance", params)
 	resp, err := c.submitRequest(buf)
 	if err != nil {
-		log.Printf("%s", err)
+		// log.Printf("%s", err)
 		return &RpcResponse{}, err
 	}
 	return resp, nil
@@ -114,10 +114,11 @@ func (c *Client) GetBalance(account string, minConf int) (*RpcResponse, error) {
 
 func (client *Client) submitRequest(params []byte) (*RpcResponse, error) {
 	req, err := http.NewRequest("POST", client.Path, strings.NewReader(string(params)))
-	creds := fmt.Sprintf("%s:%s", client.Options.Login, client.Options.Password)
-	header := b64.StdEncoding.EncodeToString([]byte(creds))
-
-	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", header))
+	if client.Options.Login != "" && client.Options.Password != "" {
+		creds := fmt.Sprintf("%s:%s", client.Options.Login, client.Options.Password)
+		header := b64.StdEncoding.EncodeToString([]byte(creds))
+		req.Header.Add("Authorization", fmt.Sprintf("Basic %s", header))
+	}
 	req.Header.Add("Content-Type", client.Options.ContentType)
 	resp, err := client.Client.Do(req)
 
@@ -148,4 +149,16 @@ func parseJSON(data []byte, dest interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func (response *RpcResponse) Result() json.RawMessage {
+	return response.Response.Result
+}
+
+func (response *RpcResponse) ID() int {
+	return response.Response.ID
+}
+
+func (response *RpcResponse) Error() json.RawMessage {
+	return response.Response.Error
 }

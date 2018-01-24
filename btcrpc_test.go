@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	// "log"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -50,6 +49,12 @@ var (
 func setupServer(payload string) *httptest.Server {
 	l, _ := net.Listen("tcp", "127.0.0.1:8334")
 	ts := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		auth := r.Header.Get("Authorization")
+		if auth == "" {
+			// Authorization header
+			// missing basic auth
+			w.WriteHeader(http.StatusUnauthorized)
+		}
 		fmt.Fprintln(w, payload)
 	}))
 	ts.Listener.Close()
@@ -63,7 +68,7 @@ func setupClient() Client {
 		Login:    "admin",
 		Password: "admin",
 		Host:     "127.0.0.1",
-		Port:     8334,
+		Port:     "8334",
 	})
 }
 
@@ -71,6 +76,22 @@ func TestNewClient(t *testing.T) {
 	assert := assert.New(t)
 	client := setupClient()
 	assert.NotNil(client)
+}
+
+func TestClientCredentials(t *testing.T) {
+	assert := assert.New(t)
+	client := NewClient(&Options{
+		Login:    "",
+		Password: "",
+		Host:     "127.0.0.1",
+		Port:     "8334",
+	})
+	assert.NotNil(client)
+	server := setupServer("{}")
+	defer server.Close()
+	resp, err := client.GetInfo()
+	assert.Nil(err)
+	assert.Equal(http.StatusUnauthorized, resp.StatusCode)
 }
 
 func TestGetInfo(t *testing.T) {
@@ -83,7 +104,7 @@ func TestGetInfo(t *testing.T) {
 
 	resp, err := client.GetInfo()
 	assert.Nil(err)
-	assert.Equal(1, resp.Response.ID)
+	assert.Equal(1, resp.ID())
 
 	assert.Equal(http.StatusOK, resp.StatusCode)
 }
@@ -98,7 +119,7 @@ func TestGetNewAddress(t *testing.T) {
 	resp, err := client.GetNewAddress("test1")
 	assert.Nil(err)
 
-	result := []byte(resp.Response.Result)
+	result := []byte(resp.Result())
 	var address string
 	json.Unmarshal(result, &address)
 
@@ -116,7 +137,7 @@ func TestGetBalance(t *testing.T) {
 	resp, err := client.GetBalance("test1", 1)
 	assert.Nil(err)
 
-	result := []byte(resp.Response.Result)
+	result := []byte(resp.Result())
 	var balance float64
 	json.Unmarshal(result, &balance)
 

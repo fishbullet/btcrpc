@@ -1,2 +1,3 @@
 vendor/
 bitcoin/testnet3
+main.go
