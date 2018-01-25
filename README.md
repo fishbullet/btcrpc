@@ -37,7 +37,7 @@ func main() {
 		Login:    "admin",
 		Password: "admin",
 		Host:     "127.0.0.1", // Localhost
-		Port:     8334,        // Testnet port
+		Port:     "8334",        // Testnet port
 		TSL:      false,       // If you're using https instead of http
 	})
 

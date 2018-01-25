@@ -44,10 +44,13 @@ var (
   "error": null,
   "id": 1
 }`
+	host    = "127.0.0.1"
+	port    = "8334"
+	address = fmt.Sprintf("%s:%s", host, port)
 )
 
 func setupServer(payload string) *httptest.Server {
-	l, _ := net.Listen("tcp", "127.0.0.1:8334")
+	l, _ := net.Listen("tcp", address)
 	ts := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		auth := r.Header.Get("Authorization")
 		if auth == "" {
@@ -67,8 +70,8 @@ func setupClient() Client {
 	return NewClient(&Options{
 		Login:    "admin",
 		Password: "admin",
-		Host:     "127.0.0.1",
-		Port:     "8334",
+		Host:     host,
+		Port:     port,
 	})
 }
 
@@ -83,8 +86,8 @@ func TestClientCredentials(t *testing.T) {
 	client := NewClient(&Options{
 		Login:    "",
 		Password: "",
-		Host:     "127.0.0.1",
-		Port:     "8334",
+		Host:     host,
+		Port:     port,
 	})
 	assert.NotNil(client)
 	server := setupServer("{}")
