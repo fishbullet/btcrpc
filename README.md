@@ -13,11 +13,12 @@ The implemented methods:
 - [x] [getinfo](https://bitcoin.org/en/developer-reference#getinfo)
 - [x] [getbalance](https://bitcoin.org/en/developer-reference#getbalance)
 - [x] [getnewaddress](https://bitcoin.org/en/developer-reference#getnewaddress)
+- [x] [validateaddress](https://bitcoin.org/en/developer-reference#validateaddress)
 - [ ] [estimatefee](https://bitcoin.org/en/developer-reference#estimatefee)
 - [ ] [sendtoaddress](https://bitcoin.org/en/developer-reference#sendtoaddress)
 - [ ] [getreceivedbyaddress](https://bitcoin.org/en/developer-reference#getreceivedbyaddress)
 
-Feel free to submit a pull request with new RPC method.
+Feel free to submit a pull request with a new RPC method.
 
 ## Usage
 

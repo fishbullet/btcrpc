@@ -112,6 +112,21 @@ func (c *Client) GetBalance(account string, minConf int) (*RpcResponse, error) {
 	return resp, nil
 }
 
+func (c *Client) ValidateAddress(address string) (*RpcResponse, error) {
+	c.l.Lock()
+	c.ID += 1
+	defer c.l.Unlock()
+	var params []interface{}
+	params = append(params, address)
+	buf := c.buildReqParams("validateaddress", params)
+	resp, err := c.submitRequest(buf)
+	if err != nil {
+		// log.Printf("%s", err)
+		return &RpcResponse{}, err
+	}
+	return resp, nil
+}
+
 func (client *Client) submitRequest(params []byte) (*RpcResponse, error) {
 	req, err := http.NewRequest("POST", client.Path, strings.NewReader(string(params)))
 	if client.Options.Login != "" && client.Options.Password != "" {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	// "log"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -13,6 +14,19 @@ import (
 var (
 	getNewAddress = `{
 	"result": "mgzMtBQTFxi4v7gv3exg4MQTddHeDWPBVo",
+	"error": null,
+	"id": 1
+}`
+
+	validateAddress = `{
+  "result": {
+	  "isvalid": true,
+	  "address": "moj9RtYj4Anwhzgkwxs1Ldaw3TPxXLSDig",
+	  "scriptPubKey": "76a9145a0f4afce3a99168131114f12430e03a30983bd388ac",
+	  "ismine": false,
+	  "iswatchonly": false,
+	  "isscript": false
+	},
 	"error": null,
 	"id": 1
 }`
@@ -145,5 +159,23 @@ func TestGetBalance(t *testing.T) {
 	json.Unmarshal(result, &balance)
 
 	assert.Equal(1.3, balance)
+	assert.Equal(http.StatusOK, resp.StatusCode)
+}
+
+func TestValidateAddress(t *testing.T) {
+	assert := assert.New(t)
+
+	server := setupServer(validateAddress)
+	defer server.Close()
+	client := setupClient()
+
+	resp, err := client.ValidateAddress("mgzMtBQTFxi4v7gv3exg4MQTddHeDWPBVo")
+	assert.Nil(err)
+
+	result := []byte(resp.Result())
+	var adder map[string]interface{}
+	json.Unmarshal(result, &adder)
+
+	assert.Equal(true, adder["isvalid"])
 	assert.Equal(http.StatusOK, resp.StatusCode)
 }

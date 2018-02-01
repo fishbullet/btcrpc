@@ -13,4 +13,6 @@ WORKDIR /root
 
 EXPOSE 8334 8334
 
+ENTRYPOINT bash
+
 CMD bitcoind -testnet -printtoconsole -conf=/root/.bitcoin/bitcoin.conf
