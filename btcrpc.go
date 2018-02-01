@@ -127,6 +127,37 @@ func (c *Client) ValidateAddress(address string) (*RpcResponse, error) {
 	return resp, nil
 }
 
+func (c *Client) EstimateFee(block int) (*RpcResponse, error) {
+	c.l.Lock()
+	c.ID += 1
+	defer c.l.Unlock()
+	var params []interface{}
+	params = append(params, block)
+	buf := c.buildReqParams("estimatesmartfee", params)
+	resp, err := c.submitRequest(buf)
+	if err != nil {
+		// log.Printf("%s", err)
+		return &RpcResponse{}, err
+	}
+	return resp, nil
+}
+
+func (c *Client) SendToAddress(address string, amount float64) (*RpcResponse, error) {
+	c.l.Lock()
+	c.ID += 1
+	defer c.l.Unlock()
+	var params []interface{}
+	params = append(params, address)
+	params = append(params, amount)
+	buf := c.buildReqParams("sendtoaddress", params)
+	resp, err := c.submitRequest(buf)
+	if err != nil {
+		// log.Printf("%s", err)
+		return &RpcResponse{}, err
+	}
+	return resp, nil
+}
+
 func (client *Client) submitRequest(params []byte) (*RpcResponse, error) {
 	req, err := http.NewRequest("POST", client.Path, strings.NewReader(string(params)))
 	if client.Options.Login != "" && client.Options.Password != "" {

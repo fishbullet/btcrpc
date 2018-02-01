@@ -12,8 +12,22 @@ import (
 )
 
 var (
+	sendToAddress = `{
+	"result": ["ef2ca42bcbf7b877dea40ebd8124360903183207340d62ae1a93dbb87896628c"],
+	"error": null,
+	"id": 1
+}`
 	getNewAddress = `{
 	"result": "mgzMtBQTFxi4v7gv3exg4MQTddHeDWPBVo",
+	"error": null,
+	"id": 1
+}`
+
+	estimateFee = `{
+	"result": {
+	  "feerate": 0.001,
+	  "blocks": 6
+	},
 	"error": null,
 	"id": 1
 }`
@@ -177,5 +191,41 @@ func TestValidateAddress(t *testing.T) {
 	json.Unmarshal(result, &adder)
 
 	assert.Equal(true, adder["isvalid"])
+	assert.Equal(http.StatusOK, resp.StatusCode)
+}
+
+func TestEstimateFee(t *testing.T) {
+	assert := assert.New(t)
+
+	server := setupServer(estimateFee)
+	defer server.Close()
+	client := setupClient()
+
+	resp, err := client.EstimateFee(6)
+	assert.Nil(err)
+
+	result := []byte(resp.Result())
+	var adder map[string]interface{}
+	json.Unmarshal(result, &adder)
+
+	assert.Equal(0.001, adder["feerate"])
+	assert.Equal(http.StatusOK, resp.StatusCode)
+}
+
+func TestSendToAddress(t *testing.T) {
+	assert := assert.New(t)
+
+	server := setupServer(sendToAddress)
+	defer server.Close()
+	client := setupClient()
+
+	resp, err := client.SendToAddress("mgzMtBQTFxi4v7gv3exg4MQTddHeDWPBVo", 0.01)
+	assert.Nil(err)
+
+	result := []byte(resp.Result())
+	var tx []interface{}
+	json.Unmarshal(result, &tx)
+
+	assert.Equal(1, len(tx))
 	assert.Equal(http.StatusOK, resp.StatusCode)
 }
