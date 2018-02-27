@@ -16,6 +16,7 @@ The implemented methods:
 - [x] [validateaddress](https://bitcoin.org/en/developer-reference#validateaddress)
 - [x] [estimatefee](https://bitcoin.org/en/developer-reference#estimatefee)
 - [x] [sendtoaddress](https://bitcoin.org/en/developer-reference#sendtoaddress)
+- [x] [move](https://bitcoin.org/en/developer-reference#move)
 
 Todo:
 
@@ -52,6 +53,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
+    // Result() returns a raw json string
+    // in order to get value you need to unmarshal it
 	result := []byte(balance.Result())
 	var b float64
 	json.Unmarshal(result, &b)

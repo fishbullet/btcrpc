@@ -81,6 +81,23 @@ func (c *Client) GetInfo() (*RpcResponse, error) {
 	return resp, nil
 }
 
+func (c *Client) Move(from, to string, amount float64) (*RpcResponse, error) {
+	c.l.Lock()
+	c.ID += 1
+	defer c.l.Unlock()
+	var params []interface{}
+	params = append(params, from)
+	params = append(params, to)
+	params = append(params, amount)
+	buf := c.buildReqParams("move", params)
+	resp, err := c.submitRequest(buf)
+	if err != nil {
+		// log.Printf("%s", err)
+		return &RpcResponse{}, err
+	}
+	return resp, nil
+}
+
 func (c *Client) GetNewAddress(account string) (*RpcResponse, error) {
 	c.l.Lock()
 	c.ID += 1
