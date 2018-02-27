@@ -53,8 +53,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
-    // Result() returns a raw json string
-    // in order to get value you need to unmarshal it
 	result := []byte(balance.Result())
 	var b float64
 	json.Unmarshal(result, &b)
