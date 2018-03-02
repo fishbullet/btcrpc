@@ -159,13 +159,16 @@ func (c *Client) EstimateFee(block int) (*RpcResponse, error) {
 	return resp, nil
 }
 
-func (c *Client) SendToAddress(address string, amount float64) (*RpcResponse, error) {
+func (c *Client) SendToAddress(address string, amount float64, withFee bool) (*RpcResponse, error) {
 	c.l.Lock()
 	c.ID += 1
 	defer c.l.Unlock()
 	var params []interface{}
 	params = append(params, address)
 	params = append(params, amount)
+	params = append(params, "")
+	params = append(params, "")
+	params = append(params, withFee)
 	buf := c.buildReqParams("sendtoaddress", params)
 	resp, err := c.submitRequest(buf)
 	if err != nil {

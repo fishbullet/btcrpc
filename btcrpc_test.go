@@ -219,7 +219,7 @@ func TestSendToAddress(t *testing.T) {
 	defer server.Close()
 	client := setupClient()
 
-	resp, err := client.SendToAddress("mgzMtBQTFxi4v7gv3exg4MQTddHeDWPBVo", 0.01)
+	resp, err := client.SendToAddress("mgzMtBQTFxi4v7gv3exg4MQTddHeDWPBVo", 0.01, false)
 	assert.Nil(err)
 
 	result := []byte(resp.Result())
