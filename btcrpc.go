@@ -60,10 +60,10 @@ func NewClient(opt *Options) Client {
 		ContentType: "text/plain",
 	}
 	var scheme string
+	scheme = "http"
 	if opt.TSL {
 		scheme = "https"
 	}
-	scheme = "http"
 	c.Path = fmt.Sprintf("%s://%s:%s", scheme, c.Options.Host, c.Options.Port)
 	return c
 }
